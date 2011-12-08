@@ -45,8 +45,40 @@
     }
 
     google.load("visualization", "1", {callback: function() {
-      var url = "https://spreadsheets.google.com/pub?key=rCaVQNfFDMhOM6ENNYeYZ9Q";
+      // TODO support multiple sheets by changing the gid. Sadly it seems
+      // extra sheets don't have the labels set correctly, even if the first
+      // row is frozen. So either we need to guess-correct this here, find out
+      // how to set labels in Google Docs, or find some other API which will
+      // give us sheet/frozen row data.
+      var url = "https://docs.google.com/spreadsheet/ccc?key=0Ar35F5WUAjXedDY4R0VTS05UcWhaM081eklIclN0VFE&gid=0";
       var query = new google.visualization.Query(url);
+      query.send(function(response) {
+        // TODO check isError
+        if (response.isError()) {
+          throw response.getDetailedMessage();
+        }
+
+        var table = response.getDataTable();
+
+        var cols = [];
+        var m = table.getNumberOfColumns();
+        for (var i = 0; i < m; i++) {
+          cols.push(table.getColumnLabel(i) || table.getColumnId(i));
+        }
+
+
+        m = table.getNumberOfRows();
+        var data = [];
+        for (var i = 0; i < m; i++) {
+          var row = {};
+          for (var j = 0; j < cols.length; j++) {
+            row[cols[j]] = table.getValue(i, j);
+          };
+          data.push(row)
+        };
+
+        console.log(table, data);
+      })
     }});
 
     var Data = function(sheet) {
@@ -87,6 +119,8 @@
         }
       );
     };
+
+    //GoDB.getData()
 
     Go(context);
 
