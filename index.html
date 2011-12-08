@@ -9,64 +9,43 @@
   <h1>Hello</h1>
 
   <script type="text/html" id="user_tmpl">
-    Games:
+    Bundles:
     <ul>
-      <% _.each(Games, function(game) { %>
-      <li><%- game.Name %></li>
+      <% _.each(Bundles, function(bundle) { %>
+      <li><%- bundle.Name %></li>
       <% }); %>
     </ul>
   </script>
 
 
   <script type="text/javascript">
-    var Bundles = [
-      {
-        Name: "Humble bundle",
-        URL: "http://www.humblebundle.com/",
-        Games: "Gish, DEFCON"
-      }
-    ];
-    var Games = [
-      {
-        Name: "Gish",
-        URL: "http://google.com/",
-        RRP: "15.99"
-      },
-      {
-        Name: "DEFCON",
-        URL: "http://defcon.com",
-        RRP: "10.99"
-      }
-    ];
+    var GoDB = function() {
 
-    var context = {
-      Bundles: Bundles,
-      Games: Games
-    }
-
-    google.load("visualization", "1", {callback: function() {
-      // TODO support multiple sheets by changing the gid. Sadly it seems
-      // extra sheets don't have the labels set correctly, even if the first
-      // row is frozen. So either we need to guess-correct this here, find out
-      // how to set labels in Google Docs, or find some other API which will
-      // give us sheet/frozen row data.
-      var url = "https://docs.google.com/spreadsheet/ccc?key=0Ar35F5WUAjXedDY4R0VTS05UcWhaM081eklIclN0VFE&gid=0";
-      var query = new google.visualization.Query(url);
-      query.send(function(response) {
-        // TODO check isError
+      // Process the response from the Google Docs query into a nice JS object.
+      //
+      // The representation I've chosen isn't the most efficient (each row is
+      // an object with every cell mapped to its column name) but it's the
+      // most pleasant to use in the templates. And I'm designing this on
+      // the basis that people aren't going to be using GDocs as a giant
+      // database, but as a small one with less than 100 rows.
+      var processResponse = function (response) {
         if (response.isError()) {
           throw response.getDetailedMessage();
         }
 
         var table = response.getDataTable();
 
+        // Get all the column names.
+        // TODO If none of the columns have labels we should assume that the
+        // tabel hasn't been set up properly and that the first row actually
+        // contains the labels.
         var cols = [];
         var m = table.getNumberOfColumns();
         for (var i = 0; i < m; i++) {
           cols.push(table.getColumnLabel(i) || table.getColumnId(i));
         }
 
-
+        // Map the row data to the column names
         m = table.getNumberOfRows();
         var data = [];
         for (var i = 0; i < m; i++) {
@@ -77,52 +56,70 @@
           data.push(row)
         };
 
-        console.log(table, data);
-      })
-    }});
-
-    var Data = function(sheet) {
-      console.log("loaded")
-    };
-
-    var Go = function(context, templater) {
-      if (typeof context == 'undefined') {
-        throw "No context given for templates";
+        return data;
       }
-      if (!templater && typeof _ === 'undefined') {
-        throw "No templater set. Please load underscore.js";
-      }
-      templater = templater || _.template;
 
-      // Replace each template script with the HTML that it generates, wrapped in
-      // a div. The div element inherits all the attributes set on the template
-      // element.
-      _.each(document.body.querySelectorAll('script[type="text/html"]'),
-        function(tmpl) {
-          // Generate the HTML.
-          var html = templater(tmpl.innerHTML, context);
+      return {
+        data: function(spreadsheet_url, callback) {
+          if (!spreadsheet_url) throw "Spreadsheet URL needed";
+          if (!callback) throw "Callback needed";
 
-          // Create the wrapping div and set the attributes except the type
-          // attribute.
-          var container = document.createElement("div");
-          container.innerHTML = html;
-          _.each(tmpl.attributes, function(attr) {
-            if (attr.name !== "type") {
-              container.setAttribute(attr.name, attr.value);
+          google.load("visualization", "1", {callback: function() {
+            // TODO support multiple sheets by changing the gid. Sadly it seems
+            // extra sheets don't have the labels set correctly, even if the
+            // first row is frozen. So either we need to guess-correct this,
+            // find out how to set labels in Google Docs, or find some other
+            // API which will give us sheet/frozen row data.
+
+            var query = new google.visualization.Query(spreadsheet_url);
+            query.send(function (response) {
+              callback(processResponse(response));
+            });
+          }});
+        },
+
+        template: function(context, templater) {
+          if (typeof context == 'undefined') {
+            throw "No context given for templates";
+          }
+          if (!templater && typeof _ === 'undefined') {
+            throw "No templater set. Please load underscore.js";
+          }
+          templater = templater || _.template;
+
+          // Replace each template script with the HTML that it generates, wrapped in
+          // a div. The div element inherits all the attributes set on the template
+          // element.
+          _.each(document.body.querySelectorAll('script[type="text/html"]'),
+            function(tmpl) {
+              // Generate the HTML.
+              var html = templater(tmpl.innerHTML, context);
+
+              // Create the wrapping div and set the attributes except the type
+              // attribute.
+              var container = document.createElement("div");
+              container.innerHTML = html;
+              _.each(tmpl.attributes, function(attr) {
+                if (attr.name !== "type") {
+                  container.setAttribute(attr.name, attr.value);
+                }
+              });
+
+              var parent = tmpl.parentElement;
+              // Insert the div and remove the template script.
+              parent.insertBefore(container, tmpl);
+              parent.removeChild(tmpl);
             }
-          });
-
-          var parent = tmpl.parentElement;
-          // Insert the div and remove the template script.
-          parent.insertBefore(container, tmpl);
-          parent.removeChild(tmpl);
+          );
         }
-      );
-    };
+      };
+    }();
 
-    //GoDB.getData()
-
-    Go(context);
+    var url = "https://docs.google.com/spreadsheet/ccc?key=0Ar35F5WUAjXedDY4R0VTS05UcWhaM081eklIclN0VFE&gid=0";
+    GoDB.data(url, function(data) {
+      console.log(data);
+      GoDB.template({Bundles: data});
+    });
 
     //var html = template({Games: Games});
     //console.log(html);
