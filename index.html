@@ -1,0 +1,97 @@
+<html>
+<head>
+  <title>Mustache test</title>
+  <script type="text/javascript" src="https://www.google.com/jsapi"></script>
+  <script type="text/javascript" src="https://raw.github.com/documentcloud/underscore/813bb57bf07d507790c6d0957dd113f0cbff0f5e/underscore-min.js"></script>
+</head>
+<body>
+
+  <h1>Hello</h1>
+
+  <script type="text/html" id="user_tmpl">
+    Games:
+    <ul>
+      <% _.each(Games, function(game) { %>
+      <li><%- game.Name %></li>
+      <% }); %>
+    </ul>
+  </script>
+
+
+  <script type="text/javascript">
+    var Bundles = [
+      {
+        Name: "Humble bundle",
+        URL: "http://www.humblebundle.com/",
+        Games: "Gish, DEFCON"
+      }
+    ];
+    var Games = [
+      {
+        Name: "Gish",
+        URL: "http://google.com/",
+        RRP: "15.99"
+      },
+      {
+        Name: "DEFCON",
+        URL: "http://defcon.com",
+        RRP: "10.99"
+      }
+    ];
+
+    var context = {
+      Bundles: Bundles,
+      Games: Games
+    }
+
+    google.load("visualization", "1", {callback: function() {
+      var url = "https://spreadsheets.google.com/pub?key=rCaVQNfFDMhOM6ENNYeYZ9Q";
+      var query = new google.visualization.Query(url);
+    }});
+
+    var Data = function(sheet) {
+      console.log("loaded")
+    };
+
+    var Go = function(context, templater) {
+      if (typeof context == 'undefined') {
+        throw "No context given for templates";
+      }
+      if (!templater && typeof _ === 'undefined') {
+        throw "No templater set. Please load underscore.js";
+      }
+      templater = templater || _.template;
+
+      // Replace each template script with the HTML that it generates, wrapped in
+      // a div. The div element inherits all the attributes set on the template
+      // element.
+      _.each(document.body.querySelectorAll('script[type="text/html"]'),
+        function(tmpl) {
+          // Generate the HTML.
+          var html = templater(tmpl.innerHTML, context);
+
+          // Create the wrapping div and set the attributes except the type
+          // attribute.
+          var container = document.createElement("div");
+          container.innerHTML = html;
+          _.each(tmpl.attributes, function(attr) {
+            if (attr.name !== "type") {
+              container.setAttribute(attr.name, attr.value);
+            }
+          });
+
+          var parent = tmpl.parentElement;
+          // Insert the div and remove the template script.
+          parent.insertBefore(container, tmpl);
+          parent.removeChild(tmpl);
+        }
+      );
+    };
+
+    Go(context);
+
+    //var html = template({Games: Games});
+    //console.log(html);
+  </script>
+</body>
+</html>
