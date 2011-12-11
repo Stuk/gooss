@@ -15,10 +15,15 @@ var GoDB = (function() {
     // contains the labels.
     var cols = [];
     var m = table.getNumberOfColumns();
+    // Store how many columns don't have Labels
+    var misses = 0;
     var i, j;
     for (i = 0; i < m; i++) {
-      cols.push(table.getColumnLabel(i) || table.getColumnId(i));
+      cols.push(table.getColumnLabel(i) || misses++, table.getColumnId(i));
     }
+    // If none of the columns have labels, use the first row as labels in the
+    //next loop
+    var relabel = misses === m;
 
     // Map the row data to the column names
     m = table.getNumberOfRows();
@@ -26,7 +31,11 @@ var GoDB = (function() {
     for (i = 0; i < m; i++) {
       var row = {};
       for (j = 0; j < cols.length; j++) {
-        row[cols[j]] = table.getValue(i, j);
+        if (relabel && i === 0) {
+          cols[i] = table.getValue(i, j);
+        } else {
+          row[cols[j]] = table.getValue(i, j);
+        }
       }
       data.push(row);
     }
