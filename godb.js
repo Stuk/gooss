@@ -117,28 +117,28 @@ var GoDB = (function() {
       // Replace each template script with the HTML that it generates, wrapped in
       // a div. The div element inherits all the attributes set on the template
       // element.
-      // TODO replace _.each here with regular JS loops
-      _.each(document.body.querySelectorAll('script[type="text/html"]'),
-        function(tmpl) {
-          // Generate the HTML.
-          var html = templater(tmpl.innerHTML, context);
+      var templates = document.body.querySelectorAll('script[type="text/html"]')
+      for (var i = 0; i < templates.length; i++) {
+        var tmpl = templates[i];
+        // Generate the HTML.
+        var html = templater(tmpl.innerHTML, context);
 
-          // Create the wrapping div and set the attributes except the type
-          // attribute.
-          var container = document.createElement("div");
-          container.innerHTML = html;
-          _.each(tmpl.attributes, function(attr) {
-            if (attr.name !== "type") {
-              container.setAttribute(attr.name, attr.value);
-            }
-          });
-
-          var parent = tmpl.parentElement;
-          // Insert the div and remove the template script.
-          parent.insertBefore(container, tmpl);
-          parent.removeChild(tmpl);
+        // Create the wrapping div and set the attributes except the type
+        // attribute.
+        var container = document.createElement("div");
+        container.innerHTML = html;
+        for (var j = 0; j < tmpl.attributes.length; j++) {
+          var attr = tmpl.attributes[j];
+          if (attr.name !== "type") {
+            container.setAttribute(attr.name, attr.value);
+          }
         }
-      );
+
+        var parent = tmpl.parentElement;
+        // Insert the div and remove the template script.
+        parent.insertBefore(container, tmpl);
+        parent.removeChild(tmpl);
+      }
     }
   };
 }());
