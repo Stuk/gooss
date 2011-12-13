@@ -10,34 +10,44 @@ var GoDB = (function() {
   // database, but as a small one with less than 100 rows.
   var processDataTable = function (table) {
     // Get all the column names.
-    // TODO If none of the columns have labels we should assume that the
-    // tabel hasn't been set up properly and that the first row actually
-    // contains the labels.
+
     var cols = [];
-    var m = table.getNumberOfColumns();
+    var n_cols = table.getNumberOfColumns();
+
+    // If none of the columns have labels we should assume that the
+    // table hasn't been set up properly and that the first row actually
+    // contains the labels.
     // Store how many columns don't have Labels
     var misses = 0;
     var i, j;
-    for (i = 0; i < m; i++) {
-      cols.push(table.getColumnLabel(i) || misses++, table.getColumnId(i));
+    for (i = 0; i < n_cols; i++) {
+      // Note the use of the comma operator here to increment the number of
+      // misses, while still returning the column id.
+      cols.push(table.getColumnLabel(i) || (misses++, table.getColumnId(i)));
     }
     // If none of the columns have labels, use the first row as labels in the
-    //next loop
-    var relabel = misses === m;
+    // next loop. Technically we don't need this variable, but it makes the
+    // code cleaner.
+    var relabel = misses === n_cols;
 
     // Map the row data to the column names
-    m = table.getNumberOfRows();
+    var n_rows = table.getNumberOfRows();
     var data = [];
-    for (i = 0; i < m; i++) {
+    for (i = 0; i < n_rows; i++) {
       var row = {};
       for (j = 0; j < cols.length; j++) {
+        //console.log(cols, cols.length, n_cols, j);
         if (relabel && i === 0) {
-          cols[i] = table.getValue(i, j);
+          cols[j] = table.getValue(i, j);
         } else {
           row[cols[j]] = table.getValue(i, j);
         }
       }
       data.push(row);
+    }
+
+    if (relabel) {
+      data.shift();
     }
 
     return data;
