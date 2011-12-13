@@ -11,32 +11,34 @@ var GoDB = (function() {
   var processDataTable = function (table) {
     // Get all the column names.
 
-    var cols = [];
-    var n_cols = table.getNumberOfColumns();
+    // Array of column labels
+    var cols = [],
+    // Array of rows in the data tabel. Return variable.
+    data = [],
+    n_cols = table.getNumberOfColumns(), n_rows = table.getNumberOfRows(),
+    // Store how many columns don't have Labels
+    misses = 0,
+    // If there are no labels, then relabel from the first row. (Technically
+    // we don't need this variable, but it makes the code easier to read.
+    relabel = false,
+    i, j;
 
+    for (i = 0; i < n_cols; i++) {
+      // Note the use of the comma operator here to increment the number of
+      // label misses, while still returning the column id.
+      cols.push(table.getColumnLabel(i) || (misses++, table.getColumnId(i)));
+    }
     // If none of the columns have labels we should assume that the
     // table hasn't been set up properly and that the first row actually
     // contains the labels.
-    // Store how many columns don't have Labels
-    var misses = 0;
-    var i, j;
-    for (i = 0; i < n_cols; i++) {
-      // Note the use of the comma operator here to increment the number of
-      // misses, while still returning the column id.
-      cols.push(table.getColumnLabel(i) || (misses++, table.getColumnId(i)));
-    }
-    // If none of the columns have labels, use the first row as labels in the
-    // next loop. Technically we don't need this variable, but it makes the
-    // code cleaner.
-    var relabel = misses === n_cols;
+    relabel = misses === n_cols;
 
-    // Map the row data to the column names
-    var n_rows = table.getNumberOfRows();
-    var data = [];
+    // Map the row values to the column names
     for (i = 0; i < n_rows; i++) {
       var row = {};
-      for (j = 0; j < cols.length; j++) {
-        //console.log(cols, cols.length, n_cols, j);
+      for (j = 0; j < n_cols; j++) {
+        // Use the first row as labels if we need to
+        // TODO: Move this into its own loop?
         if (relabel && i === 0) {
           cols[j] = table.getValue(i, j);
         } else {
@@ -46,6 +48,7 @@ var GoDB = (function() {
       data.push(row);
     }
 
+    // If we've relabeled the first row is useless.
     if (relabel) {
       data.shift();
     }
