@@ -8,13 +8,7 @@ var GoDB = (function() {
   // most pleasant to use in the templates. And I'm designing this on
   // the basis that people aren't going to be using GDocs as a giant
   // database, but as a small one with less than 100 rows.
-  var processResponse = function (response) {
-    if (response.isError()) {
-      throw response.getDetailedMessage();
-    }
-
-    var table = response.getDataTable();
-
+  var processDataTable = function (table) {
     // Get all the column names.
     // TODO If none of the columns have labels we should assume that the
     // tabel hasn't been set up properly and that the first row actually
@@ -41,25 +35,51 @@ var GoDB = (function() {
   };
 
   return {
-    data: function(spreadsheet_url, callback) {
-      if (!spreadsheet_url) {
-        throw "Spreadsheet URL needed";
+    data: function(worksheets, callback) {
+      if (!worksheets) {
+        throw "Worksheets needed";
       }
       if (!callback) {
         throw "Callback needed";
       }
 
       google.load("visualization", "1", {callback: function() {
-        // TODO support multiple sheets by changing the gid. Sadly it seems
+        // TODO Sadly it seems
         // extra sheets don't have the labels set correctly, even if the
         // first row is frozen. So either we need to guess-correct this,
         // find out how to set labels in Google Docs, or find some other
         // API which will give us sheet/frozen row data.
 
-        var query = new google.visualization.Query(spreadsheet_url);
-        query.send(function (response) {
-          callback(processResponse(response));
-        });
+        var data = {}, sheets = 0;
+
+        for (var sheet_name in worksheets) {
+          if (worksheets.hasOwnProperty(sheet_name)) {
+            sheets += 1;
+            var sheet = worksheets[sheet_name];
+            sheet.index = sheet.index || 0;
+            var query = new google.visualization.Query(sheet.url + "&gid=" + parseInt(sheet.index));
+            query.send((function() {
+              var _sheet_name = sheet_name;
+              return function (response) {
+                if (response.isError()) {
+                  callback(response.getDetailedMessage());
+                  // prevent the callback being called again for any successful
+                  // sheets
+                  sheets = -2;
+                  return;
+                }
+
+                data[_sheet_name] = processDataTable(response.getDataTable());
+                sheets -= 1;
+                if (sheets === 0) {
+                  callback(null, data)
+                }
+              }
+            })());
+          }
+        }
+
+
       }});
     },
 
@@ -75,6 +95,7 @@ var GoDB = (function() {
       // Replace each template script with the HTML that it generates, wrapped in
       // a div. The div element inherits all the attributes set on the template
       // element.
+      // TODO replace _.each here with regular JS loops
       _.each(document.body.querySelectorAll('script[type="text/html"]'),
         function(tmpl) {
           // Generate the HTML.

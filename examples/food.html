@@ -1,0 +1,39 @@
+<!doctype html>
+<html>
+<head>
+ <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+ <title>GoDB food example</title>
+ <script type="text/javascript" src="https://www.google.com/jsapi"></script>
+ <script type="text/javascript" src="underscore.js"></script>
+ <script type="text/javascript" src="../godb.js"></script>
+ <link rel="stylesheet" type="text/css" href="style.css" />
+</head>
+<body>
+
+  <h1>GoDB food example</h1>
+
+  <pre id="output">Loading...</pre>
+
+  <script type="text/javascript">
+    var url = "https://docs.google.com/spreadsheet/ccc?key=0Ar35F5WUAjXedE9SMDRnT0dmUXdNQmJxeG5CRXpjSVE";
+    GoDB.data(
+      {
+        Food: {
+          url: url,
+          index: 0
+        },
+        Ingredients: {
+          url: url,
+          index: 1
+        }
+      },
+      function (err, data) {
+        if (err) return alert(err);
+        console.log(data);
+        document.getElementById("output").innerHTML = data;
+      }
+    );
+  </script>
+
+</body>
+</html>
