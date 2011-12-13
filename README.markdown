@@ -119,7 +119,7 @@ See a full example at http://bundlebundlebundle.com/ TODO
 Quick start
 -----------
 
-## Spreadsheet
+### Spreadsheet
 
   1. Go to http://docs.google.com/ and create a new spreadsheet.
   2. In the top right click "Share".
@@ -127,14 +127,14 @@ Quick start
   4. Select "Anyone with the link".
   5. Make a note of the "Link to share".
 
-## Website
+### Website
 
   1. Clone [this repository](#) TODO
   2. In `index.html` set the `url` to the one from above.
   3. Code your template.
   4. Push to Github or your favourite static file host!
 
-## RSS feed (bonus)
+### RSS feed (bonus)
 
   1. On your spreadsheet go to "File" > "Publish to the Web".
   2. Select your main worksheet, and click "Start publishing".
