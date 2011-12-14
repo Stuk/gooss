@@ -6,7 +6,6 @@
  <script type="text/javascript" src="https://www.google.com/jsapi"></script>
  <script type="text/javascript" src="underscore.js"></script>
  <script type="text/javascript" src="../godb.js"></script>
- <link rel="stylesheet" type="text/css" href="style.css" />
 </head>
 <body>
 
@@ -30,7 +29,7 @@
       function (err, data) {
         if (err) return alert(err);
         console.log(data);
-        document.getElementById("output").innerHTML = data;
+        document.getElementById("output").innerHTML = JSON.stringify(data, null, 2);
       }
     );
   </script>

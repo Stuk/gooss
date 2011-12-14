@@ -76,14 +76,14 @@ from [Underscore.js](http://documentcloud.github.com/underscore/).
 
 #### Example
 
-This example uses the data from the above example. [Live demo](http://stuartk.com/godb/examples/template.html) TODO
+This example uses the data from the above example. [Live demo](http://stuartk.com/godb/examples/template.html)
 
     <body>
       <h1>Menu</h1>
       <script type="text/html" class="menu">
       <ul>
         <% for (var i = 0; i < Food.length; i++) { %>
-          <li><%- Food[i].name %> (contains <% print(Food[i].Ingredients.replace(/\n/g, ", ")) %>)</li>
+          <li><%- Food[i].Name %> (contains <% print(Food[i].Ingredients.replace(/\n/g, ", ")) %>)</li>
         <% } %>
       </ul>
       </script>
@@ -114,7 +114,7 @@ Will result in the DOM looking like:
 Full examples
 -------------
 
-See a full example at http://bundlebundlebundle.com/ TODO
+See a full example at http://stuartk.com/bundlebundlebundle
 
 Quick start
 -----------
