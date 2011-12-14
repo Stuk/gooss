@@ -133,7 +133,7 @@ Quick start
 
 ### Website
 
-  1. Clone [this repository](#) TODO
+  1. Clone [this repository](https://github.com/Stuk/gooss-quickstart)
   2. In `index.html` set the `url` to the one from above.
   3. Code your template.
   4. Push to Github or your favourite static file host!
