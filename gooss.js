@@ -1,4 +1,4 @@
-var GoDB = (function() {
+var gooss = (function() {
   "use strict";
 
   // Process the response from the Google Docs query into a nice JS object.

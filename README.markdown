@@ -1,4 +1,4 @@
-GoDB.js
+gooss.js
 =======
 
 ## Use a Google spreadsheet as a database, no server needed. See [Quick start](#quick-start)
@@ -6,7 +6,7 @@ GoDB.js
 API
 ---
 
-### `GoDB.data(*object* worksheets, *function* callback(*string* err, *object* data))`
+### `gooss.data(*object* worksheets, *function* callback(*string* err, *object* data))`
 
 The function will retrieve the given worksheets from Google, arrange the data
 into nice objects, and call your callback with the data when all the worksheets
@@ -25,9 +25,9 @@ value[1].
 
 #### Example
 
-This example uses the [Food spreadsheet][food_ss]. [Live demo](http://stuartk.com/godb/examples/food.html)
+This example uses the [Food spreadsheet][food_ss]. [Live demo](http://stuartk.com/gooss/examples/food.html)
 
-    GoDB.data(
+    gooss.data(
       {
         Food: {
           url: "https://docs.google.com/spreadsheet/ccc?key=0Ar35F5WUAjXedE9SMDRnT0dmUXdNQmJxeG5CRXpjSVE",
@@ -59,7 +59,7 @@ This will log to the console something like ("…" is more data):
     }
 
 
-### `GoDB.template(*object* data [, *function* templater(*string* template, *object* data])`
+### `gooss.template(*object* data [, *function* templater(*string* template, *object* data])`
 
 This function will find all `<script>` tags with type `text/html` in the body
 of the page and replace them with the rendered template wrapped inside a
@@ -67,7 +67,7 @@ of the page and replace them with the rendered template wrapped inside a
 (except `type`).
 
 `data` is the data to be used in the template, most likely from inside the
-`GoDB.data` callback.
+`gooss.data` callback.
 
 `templater(*string* template, *object* data)` (optional) is the templating
 function to use. It must return a string. If not set it will use `_.template()`
@@ -76,7 +76,7 @@ from [Underscore.js](http://documentcloud.github.com/underscore/).
 
 #### Example
 
-This example uses the data from the above example. [Live demo](http://stuartk.com/godb/examples/template.html)
+This example uses the data from the above example. [Live demo](http://stuartk.com/gooss/examples/template.html)
 
     <body>
       <h1>Menu</h1>
@@ -90,8 +90,8 @@ This example uses the data from the above example. [Live demo](http://stuartk.co
 
       <script type="text/javascript">
         // Data has been set elsewhere. This line would probably be inside the
-        // GoDB.data callback function.
-        GoDB.template(data);
+        // gooss.data callback function.
+        gooss.template(data);
       </script>
     </body>
 
@@ -145,7 +145,7 @@ Footnotes
 ---------
 
 [1] This is not the most space-efficient representation of the sheet, but it's
-the most developer friendly. I've designed GoDB to be used with relatively
+the most developer friendly. I've designed gooss to be used with relatively
 small (<100 rows) worksheets.
 
 [food_ss]: https://docs.google.com/spreadsheet/ccc?key=0Ar35F5WUAjXedE9SMDRnT0dmUXdNQmJxeG5CRXpjSVE
