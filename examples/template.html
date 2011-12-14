@@ -1,0 +1,35 @@
+<!doctype html>
+<html>
+<head>
+ <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+ <title>GoDB food example</title>
+ <script type="text/javascript" src="underscore.js"></script>
+ <script type="text/javascript" src="../godb.js"></script>
+</head>
+<body>
+  <h1>Menu</h1>
+  <script type="text/html" class="menu">
+  <ul>
+    <% for (var i = 0; i < Food.length; i++) { %>
+      <li><%- Food[i].Name %> (contains <% print(Food[i].Ingredients.replace(/\n/g, ", ")) %>)</li>
+    <% } %>
+  </ul>
+  </script>
+
+  <h2>Ingredients</h2>
+  <script type="text/html" class="ingredients">
+  <ul>
+    <% for (var i = 0; i < Ingredients.length; i++) { %>
+      <li><img src="<%= Ingredients[i].Picture %>" alt="<%= Ingredients[i].Name %>" title="<%= Ingredients[i].Name %>" /></li>
+    <% } %>
+  </ul>
+  </script>
+
+  <script type="text/javascript">
+    // From https://docs.google.com/spreadsheet/ccc?key=0Ar35F5WUAjXedE9SMDRnT0dmUXdNQmJxeG5CRXpjSVE
+    var data = {"Food":[{"Name":"Cake","Ingredients":"Butter\nSugar\nEggs\nFlour","Preparation time":10,"Cooking time":20},{"Name":"Omelette","Ingredients":"Eggs\nCheese","Preparation time":5,"Cooking time":10},{"Name":"Toast","Ingredients":"Bread\nButter","Preparation time":0,"Cooking time":4},{"Name":"Pancake","Ingredients":"Flour\nEggs\nMilk","Preparation time":10,"Cooking time":3}],"Ingredients":[{"Name":"Butter","Measure":"Weight","Picture":"http://upload.wikimedia.org/wikipedia/commons/thumb/e/e2/Butter_at_the_Borough_Market.jpg/250px-Butter_at_the_Borough_Market.jpg"},{"Name":"Sugar","Measure":"Weight","Picture":"http://upload.wikimedia.org/wikipedia/commons/thumb/3/3c/Sucre_blanc_cassonade_complet_rapadura.jpg/180px-Sucre_blanc_cassonade_complet_rapadura.jpg"},{"Name":"Eggs","Measure":"Individual","Picture":"http://upload.wikimedia.org/wikipedia/commons/thumb/e/ee/Egg_colours.jpg/220px-Egg_colours.jpg"},{"Name":"Flour","Measure":"Weight","Picture":"http://upload.wikimedia.org/wikipedia/commons/thumb/2/26/Wheatflour_rw.jpg/300px-Wheatflour_rw.jpg"},{"Name":"Cheese","Measure":"Weight","Picture":"http://upload.wikimedia.org/wikipedia/commons/thumb/c/c2/Emmentaler.jpg/220px-Emmentaler.jpg"},{"Name":"Bread","Measure":"Individual","Picture":"http://upload.wikimedia.org/wikipedia/commons/thumb/1/1f/FD_1.jpg/220px-FD_1.jpg"},{"Name":"Milk","Measure":"Volume","Picture":"http://upload.wikimedia.org/wikipedia/commons/thumb/a/ad/Glass_of_milk_on_tablecloth.jpg/220px-Glass_of_milk_on_tablecloth.jpg"}]};
+
+    GoDB.template(data);
+  </script>
+</body>
+</html>
