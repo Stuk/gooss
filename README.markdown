@@ -1,7 +1,11 @@
 gooss.js
-=======
+========
 
-## Use a Google spreadsheet as a database, no server needed. See [Quick start](#quick-start)
+Use a Google spreadsheet as a database, no server-side code needed.
+
+*Note: this project uses a (slightly) customised version of underscore, with
+[this patch](https://github.com/documentcloud/underscore/pull/401) (a templating
+fix) included.*
 
 API
 ---
@@ -149,3 +153,8 @@ the most developer friendly. I've designed gooss to be used with relatively
 small (<100 rows) worksheets.
 
 [food_ss]: https://docs.google.com/spreadsheet/ccc?key=0Ar35F5WUAjXedE9SMDRnT0dmUXdNQmJxeG5CRXpjSVE
+
+License
+-------
+
+Licensed under the MIT license.

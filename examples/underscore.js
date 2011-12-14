@@ -1,3 +1,6 @@
+// NOTE: THIS IS A CUSTOMISED VERSION OF UNDERSCORE, WITH THE FOLLOWING PATCH
+// INCLUDED: https://github.com/documentcloud/underscore/pull/401
+
 //     Underscore.js 1.2.3
 //     (c) 2009-2011 Jeremy Ashkenas, DocumentCloud Inc.
 //     Underscore is freely distributable under the MIT license.

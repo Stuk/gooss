@@ -1,3 +1,10 @@
+// Gooss.js
+// Use a Google spreadsheet as a database, no server-side code needed.
+//
+// Copyright (c) 2011 Stuart Knightley
+// Gooss.js is freely distributable under the MIT license.
+// See https://stuartk.com/gooss/ for more details and documentation.
+
 var gooss = (function() {
   "use strict";
 
