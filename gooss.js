@@ -141,7 +141,7 @@ var gooss = (function() {
           }
         }
 
-        var parent = tmpl.parentElement;
+        var parent = tmpl.parentNode;
         // Insert the div and remove the template script.
         parent.insertBefore(container, tmpl);
         parent.removeChild(tmpl);
