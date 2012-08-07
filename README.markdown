@@ -3,14 +3,10 @@ gooss.js
 
 Use a Google spreadsheet as a database, no server-side code needed.
 
-*Note: this project uses a (slightly) customised version of underscore, with
-[this patch](https://github.com/documentcloud/underscore/pull/401) (a templating
-fix) included.*
-
 API
 ---
 
-### `gooss.data(*object* worksheets, *function* callback(*string* err, *object* data))`
+### `gooss.data(worksheets, callback)`
 
 The function will retrieve the given worksheets from Google, arrange the data
 into nice objects, and call your callback with the data when all the worksheets
@@ -20,7 +16,7 @@ have been loaded.
 the value is an object with the properties `url` and `index`. See below for
 an example.
 
-`callback(*string* err, *object* data)` is called when the data has been
+`callback(err, data)` is called when the data has been
 retrieved from the spreadsheet. If there has been an error, `err` will be set
 to an error message, otherwise it will be `null`. `data` is an object that maps
 the worksheet names given in `worksheets` to an array of rows from that
@@ -63,7 +59,7 @@ This will log to the console something like ("…" is more data):
     }
 
 
-### `gooss.template(*object* data [, *function* templater(*string* template, *object* data])`
+### `gooss.template(data [, templater])`
 
 This function will find all `<script>` tags with type `text/html` in the body
 of the page and replace them with the rendered template wrapped inside a
@@ -73,10 +69,11 @@ of the page and replace them with the rendered template wrapped inside a
 `data` is the data to be used in the template, most likely from inside the
 `gooss.data` callback.
 
-`templater(*string* template, *object* data)` (optional) is the templating
-function to use. It must return a string. If not set it will use `_.template()`
-from [Underscore.js](http://documentcloud.github.com/underscore/).
-(you must load the Underscore library onto your page).
+`templater(template, data)` (optional) is the templating function to use. It
+should accept a template string (taken from the `<script>` tags) and a data
+object. It must return a string. If not set it will use `_.template()` from
+[Underscore.js](http://documentcloud.github.com/underscore/) (you must load the
+Underscore library onto your page).
 
 #### Example
 
@@ -118,7 +115,7 @@ Will result in the DOM looking like:
 Full examples
 -------------
 
-See a full example at http://stuartk.com/bundlebundlebundle
+See a full example at http://stuartk.com/bundle
 
 Quick start
 -----------
